@@ -1,0 +1,15 @@
+@import "../../index.scss";
+
+.pokemon-list {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+
+  &__items {
+    margin: 25px;
+    padding: 25px;
+    background: white;
+    border-radius: 3px;
+    color: $darkGrey;
+  }
+}
