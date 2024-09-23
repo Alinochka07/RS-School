@@ -41,7 +41,7 @@ class ModalSpecies extends Component<ModalSpeciesProps, ModalSpeciesState> {
     if (this.props.speciesUrl) {
       await fetch(this.props.speciesUrl)
         .then((response) => response.json())
-        .then((data) => this.setState({ species: data }));
+        .then((data) => this.setState({ species: data, isLoading: false }));
     }
   };
 
@@ -53,22 +53,29 @@ class ModalSpecies extends Component<ModalSpeciesProps, ModalSpeciesState> {
       flavorText.map((text) => flavorTexts.push(text.flavor_text));
     }
     const sprites = this.props.sprites;
+    const isLoading = this.state.isLoading;
 
     return (
       <div className="modal-window__main">
-        <div>
-          <span>
-            <b>Flavor texts:</b>
-          </span>
-          <p>{flavorTexts[1]}</p>
-          <p>{flavorTexts[2]}</p>
-          <p>{flavorTexts[3]}</p>
-        </div>
-        <img
-          className="modal-window__image"
-          alt="pokemon image"
-          src={sprites?.front_default ?? sprites?.front_shiny}
-        />
+        {isLoading ? (
+          <p>Please wait. Loading...</p>
+        ) : (
+          <>
+            <div className="modal-window__content">
+              <span>
+                <b>Flavor texts:</b>
+              </span>
+              <p>{flavorTexts[1]}</p>
+              <p>{flavorTexts[2]}</p>
+              <p>{flavorTexts[3]}</p>
+            </div>
+            <img
+              className="modal-window__image"
+              alt="pokemon image"
+              src={sprites?.front_default ?? sprites?.front_shiny}
+            />
+          </>
+        )}
       </div>
     );
   }

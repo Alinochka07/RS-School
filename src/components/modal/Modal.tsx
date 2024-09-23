@@ -19,8 +19,6 @@ interface ModalProps {
   selectedPokemon: {
     url: string;
   };
-  isLoading: boolean;
-  error: string;
   handleClose: () => boolean | void;
 }
 
@@ -35,8 +33,9 @@ interface Species {
 
 interface ModalState {
   pokemon: Pokemon;
-  error: string;
   species: Species[];
+  isLoaded: boolean;
+  error: string;
 }
 
 class Modal extends Component<ModalProps, ModalState> {
@@ -53,6 +52,7 @@ class Modal extends Component<ModalProps, ModalState> {
       },
       error: "",
       species: [],
+      isLoaded: true,
     };
   }
   componentDidMount(): void {
@@ -63,29 +63,33 @@ class Modal extends Component<ModalProps, ModalState> {
     fetch(this.props.selectedPokemon.url)
       .then((response) => response.json())
       .then((pokemon) => {
-        this.setState({ pokemon: pokemon });
+        this.setState({ pokemon: pokemon, isLoaded: false });
       })
       .catch((err) => this.setState({ error: err.message }));
   };
 
   render() {
-    const { pokemon } = this.state;
-    const handleClose = this.props.handleClose;
+    const { pokemon, isLoaded } = this.state;
+    const { handleClose } = this.props;
 
     return (
       <div className="modal">
         <div className="modal-window">
-          <div className="modal-window__header">
-            <p>
-              <b>Name: </b>
-              {pokemon.name.toLocaleUpperCase().slice(0, 1) +
-                pokemon.name.slice(1)}
-            </p>
-            <p>
-              <b>Order number: </b>
-              {pokemon.order}
-            </p>
-          </div>
+          {isLoaded ? (
+            <h4>Loading...</h4>
+          ) : (
+            <div className="modal-window__header">
+              <p>
+                <b>Name: </b>
+                {pokemon.name.toLocaleUpperCase().slice(0, 1) +
+                  pokemon.name.slice(1)}
+              </p>
+              <p>
+                <b>Order number: </b>
+                {pokemon.order}
+              </p>
+            </div>
+          )}
           <ModalSpecies
             speciesUrl={pokemon.species.url}
             sprites={pokemon.sprites}
@@ -95,6 +99,7 @@ class Modal extends Component<ModalProps, ModalState> {
               Close
             </button>
           </div>
+          )
         </div>
       </div>
     );

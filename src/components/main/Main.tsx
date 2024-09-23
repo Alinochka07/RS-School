@@ -1,19 +1,17 @@
 import { Component } from "react";
 import { Pokemons } from "../../App";
-import Modal from "../modal/Modal";
 import "./Main.scss";
+import Search from "../search/Search";
+import Item from "../item/Item";
 
 interface MainProps {
   pokemons: Pokemons[];
-  error: string;
   isLoading: boolean;
 }
 
 interface MainState {
-  isOpen: boolean;
-  selectedPokemon: {
-    url: string;
-  };
+  pokemon: Pokemons[];
+  isSearchFieldEmpty: boolean;
 }
 
 class Main extends Component<MainProps, MainState> {
@@ -21,67 +19,53 @@ class Main extends Component<MainProps, MainState> {
     super(props);
 
     this.state = {
-      isOpen: false,
-      selectedPokemon: {
-        url: "",
-      },
+      pokemon: [],
+      isSearchFieldEmpty: true,
     };
-    this.handleOpen = this.handleOpen.bind(this);
-    this.handleClose = this.handleClose.bind(this);
   }
 
-  handleOpen = (pokemon: { url: string }) => {
+  handleSetPokemon = (value: { name: string; url: string }[]) => {
     this.setState({
-      isOpen: true,
-      selectedPokemon: pokemon,
+      pokemon: value,
     });
   };
 
-  handleClose = () => {
+  handleSetSearchField = (isEmpty: boolean) => {
     this.setState({
-      isOpen: false,
+      isSearchFieldEmpty: isEmpty,
     });
   };
 
-  capitalizeFirst = (value: string) => {
-    const newValue = value.toUpperCase().slice(0, 1) + value.slice(1);
-    return newValue;
+  getDisplayedPokemon = () => {
+    return this.state.pokemon.length > 0
+      ? this.state.pokemon
+      : this.props.pokemons;
   };
 
   render() {
-    const { pokemons, error, isLoading } = this.props;
-    const { isOpen, selectedPokemon } = this.state;
+    const { pokemons, isLoading } = this.props;
+    const displayedPokemon = this.getDisplayedPokemon();
+    const { isSearchFieldEmpty } = this.state;
 
     return (
       <main>
-        {isLoading ? (
-          <div>Please wait. Data is loading...</div>
-        ) : (
-          <div className="pokemon-list">
-            {pokemons.map((pokemon) => {
-              return (
-                <>
-                  <div className="pokemon-list__items" key={pokemon.name}>
-                    <h4 className="items-name">
-                      {this.capitalizeFirst(pokemon.name)}
-                    </h4>
-                    <button onClick={() => this.handleOpen(pokemon)}>
-                      See details
-                    </button>
-                  </div>
-                </>
-              );
-            })}
-            {isOpen ? (
-              <Modal
-                selectedPokemon={selectedPokemon}
-                error={error}
-                isLoading={isLoading}
-                handleClose={this.handleClose}
-              />
-            ) : null}
-          </div>
-        )}
+        <Search
+          pokemons={pokemons}
+          handleSetSearchedPokemon={this.handleSetPokemon}
+          searchFieldEmpty={this.handleSetSearchField}
+          isSearchFieldEmpty={isSearchFieldEmpty}
+        />
+
+        <section className="pokemons">
+          {isLoading ? (
+            <div>Please wait. Data is loading...</div>
+          ) : (
+            <Item
+              pokemon={displayedPokemon}
+              isSearchFieldEmpty={isSearchFieldEmpty}
+            />
+          )}
+        </section>
       </main>
     );
   }

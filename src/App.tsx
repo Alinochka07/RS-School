@@ -23,7 +23,7 @@ class App extends Component<object, PokemonsState> {
     this.state = {
       pokemons: [],
       offset: 0,
-      limit: 10,
+      limit: 50,
       url: "https://pokeapi.co/api/v2/pokemon",
       error: "",
       isLoading: true,
@@ -36,11 +36,11 @@ class App extends Component<object, PokemonsState> {
 
   fetchPokemons = () => {
     fetch(
-      `${this.state.url}?limit=${this.state.limit}&offset=${this.state.offset}`,
+      `${this.state.url}?limit=${this.state.limit}&offset=${this.state.offset}`
     )
       .then((response) => response.json())
       .then((data) =>
-        this.setState({ pokemons: data.results, isLoading: false }),
+        this.setState({ pokemons: data.results, isLoading: false })
       )
       .catch((error) => this.setState({ error: error.message }));
   };
@@ -54,7 +54,7 @@ class App extends Component<object, PokemonsState> {
     return (
       <>
         <Header pokemons={pokemons} />
-        <Main pokemons={pokemons} error={error} isLoading={isLoading} />
+        <Main pokemons={pokemons} isLoading={isLoading} />
       </>
     );
   }
