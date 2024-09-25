@@ -4,20 +4,16 @@ import "./Search.scss";
 
 interface SearchProps {
   pokemons: Pokemons[];
-  handleSetSearchedPokemon: (
-    value: {
-      name: string;
-      url: string;
-    }[]
-  ) => void;
-  searchFieldEmpty: (isEmpty: boolean) => void;
-  isSearchFieldEmpty: boolean;
+  handleSetSearchedPokemon: (value: string) => void;
+  pokemon: Pokemons[];
 }
 
 interface SearchState {
   isLoading: boolean;
   searchValue: string;
   storedValue: string;
+  isOpen: boolean;
+  isPokemonClicked: boolean;
 }
 
 class Search extends Component<SearchProps, SearchState> {
@@ -28,6 +24,8 @@ class Search extends Component<SearchProps, SearchState> {
       isLoading: true,
       searchValue: "",
       storedValue: "",
+      isOpen: false,
+      isPokemonClicked: false,
     };
   }
 
@@ -35,7 +33,6 @@ class Search extends Component<SearchProps, SearchState> {
     const searchedTerm = localStorage.getItem("searchValue");
     if (searchedTerm) {
       this.setState({ storedValue: searchedTerm });
-      this.props.searchFieldEmpty(false);
     }
   }
 
@@ -51,35 +48,19 @@ class Search extends Component<SearchProps, SearchState> {
     });
   };
 
-  handleClearSearched = () => {
-    this.props.handleSetSearchedPokemon([]);
-  };
-
   handleSearchClick = () => {
-    if (this.state.searchValue === "") {
-      this.props.handleSetSearchedPokemon(this.props.pokemons);
-      this.props.searchFieldEmpty(true);
-    } else {
-      if (this.props.pokemons.length > 0) {
-        const foundPokemon = this.props.pokemons.filter((pokemon) =>
-          pokemon.name
-            .toLowerCase()
-            .includes(this.state.searchValue.toLowerCase())
-        );
-        this.props.handleSetSearchedPokemon(foundPokemon);
-        this.props.searchFieldEmpty(foundPokemon.length === 0);
-      }
-    }
-    localStorage.setItem("searchValue", this.state.searchValue);
-    this.setState({ storedValue: this.state.searchValue });
+    const query = this.state.searchValue.toLowerCase().replace(/[,.\s]/g, "");
+    this.props.handleSetSearchedPokemon(query);
+    localStorage.setItem("searchValue", query);
   };
 
-  handleClear = () => {
+  handleClearSearched = () => {
+    const searchedTerm = localStorage.getItem("searchValue");
     this.setState({
       searchValue: "",
+      storedValue: searchedTerm || "",
     });
-    this.props.handleSetSearchedPokemon(this.props.pokemons);
-    this.props.searchFieldEmpty(true);
+    this.props.handleSetSearchedPokemon("");
   };
 
   render() {
@@ -91,11 +72,11 @@ class Search extends Component<SearchProps, SearchState> {
           <input
             className="search-input"
             onChange={this.handleChange}
-            placeholder={storedValue ?? "Search pokemon"}
+            placeholder={storedValue}
             value={searchValue}
           />
           {searchValue ? (
-            <button onClick={this.handleClear} className="clear-button">
+            <button onClick={this.handleClearSearched} className="clear-button">
               X
             </button>
           ) : null}

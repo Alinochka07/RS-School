@@ -5,7 +5,7 @@ import Modal from "../modal/Modal";
 
 interface ItemProps {
   pokemon: Pokemons[];
-  isSearchFieldEmpty: boolean;
+  chosenPokemon: object[];
 }
 
 interface ItemState {
@@ -47,12 +47,12 @@ class Item extends Component<ItemProps, ItemState> {
   };
 
   render() {
-    const { pokemon, isSearchFieldEmpty } = this.props;
+    const { pokemon, chosenPokemon } = this.props;
     const { selectedPokemon, isOpen } = this.state;
 
     return (
       <section className={`pokemon${pokemon.length > 1 ? "-items" : "-item"}`}>
-        {pokemon && (pokemon.length > 0 || isSearchFieldEmpty) ? (
+        {pokemon && pokemon.length > 0 ? (
           <div className="pokemon-list">
             {pokemon.map((poke) => (
               <div className="pokemon-list__items" key={poke.name}>
@@ -70,7 +70,7 @@ class Item extends Component<ItemProps, ItemState> {
 
             {isOpen && (
               <Modal
-                selectedPokemon={selectedPokemon}
+                selectedPokemon={selectedPokemon ?? chosenPokemon}
                 handleClose={this.handleClose}
               />
             )}

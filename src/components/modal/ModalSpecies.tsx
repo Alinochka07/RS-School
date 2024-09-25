@@ -62,18 +62,20 @@ class ModalSpecies extends Component<ModalSpeciesProps, ModalSpeciesState> {
         ) : (
           <>
             <div className="modal-window__content">
-              <span>
-                <b>Flavor texts:</b>
-              </span>
-              <p>{flavorTexts[1]}</p>
-              <p>{flavorTexts[2]}</p>
-              <p>{flavorTexts[3]}</p>
+              <img
+                className="modal-window__image"
+                alt="pokemon image"
+                src={sprites?.front_default ?? sprites?.front_shiny}
+              />
+              <div>
+                <span>
+                  <b>Flavor texts:</b>
+                </span>
+                <p>{flavorTexts[1]}</p>
+                <p>{flavorTexts[2]}</p>
+                <p>{flavorTexts[3]}</p>
+              </div>
             </div>
-            <img
-              className="modal-window__image"
-              alt="pokemon image"
-              src={sprites?.front_default ?? sprites?.front_shiny}
-            />
           </>
         )}
       </div>

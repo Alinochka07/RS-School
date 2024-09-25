@@ -11,7 +11,6 @@ interface MainProps {
 
 interface MainState {
   pokemon: Pokemons[];
-  isSearchFieldEmpty: boolean;
 }
 
 class Main extends Component<MainProps, MainState> {
@@ -20,19 +19,15 @@ class Main extends Component<MainProps, MainState> {
 
     this.state = {
       pokemon: [],
-      isSearchFieldEmpty: true,
     };
   }
 
-  handleSetPokemon = (value: { name: string; url: string }[]) => {
+  handleSetPokemon = (value: string) => {
+    const pokemon = this.props.pokemons.filter((pokemon) =>
+      pokemon.name.toLowerCase().includes(value.toLowerCase().trim())
+    );
     this.setState({
-      pokemon: value,
-    });
-  };
-
-  handleSetSearchField = (isEmpty: boolean) => {
-    this.setState({
-      isSearchFieldEmpty: isEmpty,
+      pokemon: pokemon,
     });
   };
 
@@ -45,25 +40,21 @@ class Main extends Component<MainProps, MainState> {
   render() {
     const { pokemons, isLoading } = this.props;
     const displayedPokemon = this.getDisplayedPokemon();
-    const { isSearchFieldEmpty } = this.state;
+    const { pokemon } = this.state;
 
     return (
       <main>
         <Search
           pokemons={pokemons}
           handleSetSearchedPokemon={this.handleSetPokemon}
-          searchFieldEmpty={this.handleSetSearchField}
-          isSearchFieldEmpty={isSearchFieldEmpty}
+          pokemon={pokemon}
         />
 
         <section className="pokemons">
           {isLoading ? (
             <div>Please wait. Data is loading...</div>
           ) : (
-            <Item
-              pokemon={displayedPokemon}
-              isSearchFieldEmpty={isSearchFieldEmpty}
-            />
+            <Item pokemon={displayedPokemon} chosenPokemon={pokemon} />
           )}
         </section>
       </main>
